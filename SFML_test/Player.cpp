@@ -3,7 +3,8 @@
 
 Player::Player()
 {
-	m_posX = m_posY = m_currentSpriteIndex = 0;
+	m_posX = m_posY = 0; 
+	m_currentSpriteIndex = 0;
 }
 
 Player::~Player()
@@ -27,7 +28,7 @@ void Player::AddSprite( sf::Sprite sprite )
 	m_currentSpriteIndex = m_spriteArray.size();
 }
 
-void Player::ChangePosition( float x, float y )
+void Player::SetPosition( float x, float y )
 {
 	m_posX = x; m_posY = y;
 	m_currentSprite.setPosition( sf::Vector2f( m_posX, m_posY ));
@@ -45,9 +46,9 @@ void Player::Dispose( void )
 
 sf::Sprite Player::GetCurrentSprite( void )
 {
-	if ( m_currentSpriteIndex > m_spriteArray.size() - 1 )
+	if ( m_currentSpriteIndex > (int)m_spriteArray.size() - 1 )
 	{
-		m_currentSpriteIndex = m_spriteArray.size() - 1;
+		m_currentSpriteIndex = (int)m_spriteArray.size() - 1;
 		m_currentSprite = m_spriteArray.at( m_currentSpriteIndex );
 	}
 	return m_currentSprite;
@@ -62,7 +63,7 @@ int Player::GetCurrentSpriteIndex( void )
 }
 void Player::SetCurrentSpriteIndex( int index )
 {
-	if ( index <= m_spriteArray.size() )
+	if ( index <= (int)m_spriteArray.size() )
 	{
 		m_currentSpriteIndex = index;
 		m_currentSprite = m_spriteArray.at( m_currentSpriteIndex );

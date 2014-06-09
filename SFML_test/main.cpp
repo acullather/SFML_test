@@ -1,3 +1,4 @@
+#include <string>
 #include <SFML\Graphics.hpp>
 #include <SFML\System\Clock.hpp>
 
@@ -12,18 +13,19 @@ const int WINDOW_WIDTH = 800;
 const int WINDOW_HEIGHT = 600;
 const int MAX_IMAGES = 4;
 
-const float FRAME_RATE = 0.25f;
+const float FRAME_RATE = 1/20.0f;
 
 int main()
 {
 	sf::Clock clock;
 	sf::Time time1 = clock.getElapsedTime();
 	sf::Time time2;
+	sf::Time animTimer = time1;
 
 	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "My Game Window");
 
 	Player player;
-	float posX = 0.0f, posY = 0.0f;
+	float posX = 0.0f, posY = 0.0f, angle = 0.0f;
 	sf::Texture t1, t2, t3, t4;
 	player.AddSprite(IMAGE_PATH_MAN1, &t1);
 	player.AddSprite(IMAGE_PATH_MAN2, &t2);
@@ -46,8 +48,25 @@ int main()
 		time2 = clock.getElapsedTime();
 		if ( (time2.asSeconds() - time1.asSeconds()) >= FRAME_RATE )
 		{
-			posX += 12; 
-			posY += 9;
+			if ( (time2.asSeconds() - animTimer.asSeconds()) >= (FRAME_RATE * 4) )
+			{
+				currentImageIndex = player.GetCurrentSpriteIndex();
+				currentImageIndex++;
+				if ( currentImageIndex > ( MAX_IMAGES - 1 ))
+				{
+					player.SetCurrentSpriteIndex( 0 );
+				}
+				else
+				{
+					player.SetCurrentSpriteIndex( currentImageIndex );
+				}
+				animTimer = time2;
+			}
+
+			posX += 4; 
+			posY += 4;
+			srand(10);
+			angle += rand();
 			if ( posX >= WINDOW_WIDTH - t1.getSize().x )
 			{
 				posX = 0;
@@ -56,17 +75,7 @@ int main()
 			{
 				posY = 0;
 			}
-			currentImageIndex = player.GetCurrentSpriteIndex();
-			currentImageIndex++;
-			if ( currentImageIndex > ( MAX_IMAGES - 1 ))
-			{
-				player.SetCurrentSpriteIndex( 0 );
-			}
-			else
-			{
-				player.SetCurrentSpriteIndex( currentImageIndex );
-			}
-			player.ChangePosition( posX, posY );
+			player.SetPosition( posX, posY );
 			time1 = time2;
 		}
 

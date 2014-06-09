@@ -12,7 +12,7 @@ public:
 
 	void AddSprite( std::string filename, sf::Texture* texture );
 	void			AddSprite(sf::Sprite sprite);
-	void ChangePosition( float x, float y );
+	void SetPosition( float x, float y );
 	void SetRotation( float angle );
 	void			Dispose( void );
 	sf::Sprite		GetCurrentSprite( void );
