@@ -3,6 +3,7 @@
 #include <SFML\System\Clock.hpp>
 
 #include "Player.h"
+#include "Configuration.h"
 
 const std::string IMAGE_PATH_MAN1 = "c:\\dev\\images\\man1.png";
 const std::string IMAGE_PATH_MAN2 = "c:\\dev\\images\\man2.png";
@@ -13,11 +14,17 @@ const int WINDOW_WIDTH = 800;
 const int WINDOW_HEIGHT = 600;
 const int MAX_IMAGES = 4;
 const float MAXIMUM_VELOCITY = 4.0f;
+const float accel = 0.6f;
 
 const float FRAME_RATE = 1/20.0f;
 
 int main()
 {
+	std::string filename = "c:\\dev\\test.cfg";
+	Configuration c( &filename );
+
+
+
 	sf::Clock clock;
 	sf::Time time1 = clock.getElapsedTime();
 	sf::Time time2;
@@ -27,8 +34,11 @@ int main()
 	window.setFramerateLimit(60);
 
 	Player player;
-	float posX = 0.0f, posY = 0.0f, angle = 0.0f;
-	float currentVelocity = 0.0f;
+	float destX = 0.0f, destY = 0.0f;
+	float posX = 0.0f, posY = 0.0f;
+	float angle = 0.0f;
+	float vi = 0.0f, vf = 1.0f, tvf = vf;
+	float dt = 0.0f;
 	sf::Texture t1, t2, t3, t4;
 	player.AddSprite(IMAGE_PATH_MAN1, &t1);
 	player.AddSprite(IMAGE_PATH_MAN2, &t2);
@@ -45,6 +55,17 @@ int main()
 			if (event.type == sf::Event::Closed)
 			{
 				window.close();
+			}
+
+			if ( event.type == sf::Event::MouseButtonPressed )
+			{
+				switch ( event.mouseButton.button )
+				{
+					case sf::Mouse::Left:
+						break;
+					default:
+						break;
+				}
 			}
 
 			if ( event.type == sf::Event::KeyPressed )
@@ -89,7 +110,13 @@ int main()
 		}
 
 		time2 = clock.getElapsedTime();
-		if ( (time2.asSeconds() - animTimer.asSeconds()) >= FRAME_RATE * 2 )
+		dt = time2.asSeconds() - time1.asSeconds();
+		posX = ( vi * dt ) + ( 0.5 * accel * powf( dt, 2 ));
+		tvf = vf;
+		vf = vi + ( accel * dt );
+		vi = tvf;
+
+		if ( time2.asSeconds() - animTimer.asSeconds() >= FRAME_RATE * 2 )
 		{
 			currentImageIndex = player.GetCurrentSpriteIndex();
 			currentImageIndex++;
@@ -104,7 +131,20 @@ int main()
 			animTimer = time2;
 		}
 
+		if ( posX > WINDOW_WIDTH )
+		{
+			posX = 0.0f;
+			vi = 0.0f;
+			vf = 1.0f;
+			time1 = time2;
+		}
+
 		player.SetPosition( posX, posY );
+
+		if ( (int)dt % 2 == 0 )
+		{
+			printf("t=%f d=(%f, %f) vi=%f vf=%f\r\n", dt, posX, posY, vi, vf);
+		}
 
 		window.clear();
 		window.draw( player.GetCurrentSprite() );

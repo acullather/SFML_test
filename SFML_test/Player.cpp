@@ -28,6 +28,11 @@ void Player::AddSprite( sf::Sprite sprite )
 	m_currentSpriteIndex = m_spriteArray.size();
 }
 
+void Player::SetDestination( float x, float y )
+{
+	m_destX = x; m_destY = y;
+}
+
 void Player::SetPosition( float x, float y )
 {
 	m_posX = x; m_posY = y;
